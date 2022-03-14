@@ -16,7 +16,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 #include QMK_KEYBOARD_H
 
-enum custom_keycodes { MY_HASH = SAFE_RANGE };
+#include <stdbool.h> //for boolean
+#include <stdint.h>
+
+enum custom_keycodes { DEL_WRD = SAFE_RANGE };
 
 #define ESC_MOD LT(2, KC_ESC)
 
@@ -48,7 +51,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
         KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,    KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_LBRC, KC_RBRC, KC_BSLS,          KC_PGUP,
         ESC_MOD, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,    KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,          KC_ENT,           KC_PGDN,
         KC_LSFT,          KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH,          KC_RSFT, KC_UP,   KC_END,
-        KC_LCTL, KC_LALT, KC_LGUI,                            KC_SPC,                             MY_HASH, MO(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
+        KC_LCTL, KC_LALT, KC_LGUI,                            KC_SPC,                             KC_RALT, MO(1),   KC_RCTL, KC_LEFT, KC_DOWN, KC_RGHT
     ),
 
     [1] = LAYOUT(
@@ -61,13 +64,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 
 
-		// I love VIM :^)
+		// "ESC" layer
 		// Holding caps (escape) will enter this mode and allow me to use a few vim features
     [2] = LAYOUT(
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
         _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______,
-        _______, _______, KC_BSPC, KC_DEL,  _______, _______, KC_LEFT, KC_DOWN, KC_UP,  KC_RIGHT, _______, _______,          _______,          _______,
+        _______, _______, DEL_WRD, KC_BSPC,  _______, _______, KC_LEFT, KC_DOWN, KC_UP,  KC_RIGHT, _______, _______,          _______,          _______,
         _______,          _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,          _______, _______, _______,
         _______, _______, _______,                            _______,                            _______, _______, _______, _______, _______, _______
     ),
@@ -75,25 +78,23 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 // clang-format on
 
-/*
+static int word_length_count = 0;
+static int last_word_length  = 0;
+
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    static uint16_t my_hash_timer;
-    switch (keycode) {
-        case MY_HASH:
-            if (record->event.pressed) {
-                my_hash_timer = timer_read();
-                register_code(KC_ESC); // Change the key to be held here
-            } else {
-                unregister_code(KC_ESC); // Change the key that was held here, too!
-                if (timer_elapsed(my_hash_timer) < TAPPING_TERM) {
-                    register_code(MO(2));
-                }
-            }
-            return false; // We handled this keypress
+    // If the keycode is any letter or number...
+    if (record->event.pressed) {
+        if (keycode >= 4 && keycode <= 39) {
+            word_length_count++;
+        } else {
+            last_word_length  = word_length_count;
+            word_length_count = 0;
+        }
     }
+
+
     return true; // We didn't handle other keypresses
 }
-*/
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
