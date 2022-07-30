@@ -17,7 +17,9 @@
 
 enum custom_keycodes {
     // Keycode to enable the EMOD layer
-    KC_EMOD = SAFE_RANGE
+    KC_EMOD = SAFE_RANGE,
+    KC_DDOT, // type ../
+    KC_NEWL, // type \n
 };
 
 enum layers {
@@ -49,8 +51,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_EMOD] = LAYOUT_65_ansi( /* EMOD */
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, KC_WH_U, KC_MS_U, KC_WH_D, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______, KC_LEFT, KC_DOWN, KC_UP,  KC_RIGHT, _______, _______,          _______, _______,
-    _______, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), _______, _______, _______, _______, _______, _______, _______,          _______, _______,
+    _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______, KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT, _______, _______,          KC_NEWL, _______,
+    _______, C(KC_Z), C(KC_X), C(KC_C), C(KC_V), _______, _______, _______, _______, KC_DDOT, _______, _______,          _______, _______,
     _______, _______, _______,                KC_BTN1,                               _______, _______, _______, _______, _______, _______),
 
 [3] = LAYOUT_65_ansi( /* Empty for dynamic keymaps */
@@ -74,6 +76,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     bool *shift_pressed = &right_shift_pressed;
 
     switch (keycode) {
+        case KC_DDOT:
+            if (record->event.pressed) SEND_STRING("../");
+            break;
+        case KC_NEWL:
+            if (record->event.pressed) SEND_STRING("\\n");
+            break;
             // Enable hitting both shift keys to toggle caps lock
         case KC_LSFT:
             shift_pressed = &left_shift_pressed;

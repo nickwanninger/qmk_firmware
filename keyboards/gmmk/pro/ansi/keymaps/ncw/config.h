@@ -4,6 +4,3 @@
 #define MOUSEKEY_INTERVAL 8
 #define MOUSEKEY_BASE_SPEED 200
 #define MOUSEKEY_MOVE_DELTA 1
-
-// i don't want rgb
-#undef RGBLIGHT_ANIMATIONS

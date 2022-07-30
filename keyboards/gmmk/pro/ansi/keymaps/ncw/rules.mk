@@ -1,4 +1,2 @@
-# UNICODE_ENABLE = yes
-UNICODE_ENABLE = yes
-
-
+# Enable mousekeys. windows sucks
+MOUSEKEY_ENABLE = yes
