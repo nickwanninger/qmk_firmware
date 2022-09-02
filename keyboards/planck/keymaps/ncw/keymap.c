@@ -15,10 +15,11 @@
  */
 
 #include QMK_KEYBOARD_H
+#include "print.h"
 
 extern keymap_config_t keymap_config;
 
-enum planck_layers { _QWERTY, _LOWER, _RAISE, _ADJUST, _EMOD, _FN };
+enum planck_layers { _QWERTY, _COLEMAK, _LOWER, _RAISE, _ADJUST, _EMOD, _FN };
 
 #define LOWER MO(_LOWER)
 #define RAISE MO(_RAISE)
@@ -29,7 +30,15 @@ enum custom_keycodes {
     // Keycode to enable the EMOD layer
     KC_EMOD = SAFE_RANGE,
     KC_NEWL, // type '\n'
+    QWERTY,
+    COLEMAK,
+    COLCOL,
 };
+
+// #define KC_EMOD LT(_EMOD, KC_ESC)
+
+// Screenshot keycode on macos (and windows if you install greenshot and configure it right...)
+#define KC_SCRT LCTL(LSFT(KC_4))
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -41,13 +50,21 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_LCTL, FUNCT,   KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
 ),
 
+[_COLEMAK] = LAYOUT_planck_grid(
+    KC_TAB,  KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,    KC_J,    KC_L,    KC_U,    KC_Y,    KC_SCLN, KC_BSPC,
+    KC_EMOD, KC_A,    KC_R,    KC_S,    KC_T,    KC_D,    KC_H,    KC_N,    KC_E,    KC_I,    KC_O,    KC_QUOT,
+    KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,    KC_K,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT,
+    KC_LCTL, FUNCT,   KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT
+),
+
+
 // KC_LBRC, KC_RBRC, KC_LPRN, KC_RPRN, KC_LCBR, KC_RCBR, KC_EQL
 // I typically use the "lower" layer for symbols. The top row has the symbols in their order from querty,
 // and the rest is based on my programming needs.
 [_LOWER] = LAYOUT_planck_grid(
     KC_TILD, _______, _______, KC_LCBR, KC_RCBR, _______, _______, KC_LPRN, KC_RPRN, KC_MINS, KC_EQL , _______,
-    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_UNDS, _______, KC_PIPE,
-    _______, _______, _______, KC_LBRC, KC_RBRC, _______, _______, _______, _______, _______, _______, KC_NEWL,
+    _______, KC_EXLM, KC_AT,   KC_HASH, KC_DLR,  KC_PERC, KC_CIRC, KC_AMPR, KC_ASTR, KC_UNDS, KC_SCLN, KC_PIPE,
+    _______, _______, _______, KC_LBRC, KC_RBRC, _______, _______, _______, KC_COMM, KC_DOT,  KC_SLSH, KC_NEWL,
     _______, _______, _______, _______, _______, _______, _______, _______, KC_MNXT, KC_VOLD, KC_VOLU, KC_MPLY
 ),
 
@@ -64,8 +81,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 // I sometimes activate it on accident when rolling between raise and lower, so having
 // anything else on here will probably result in bad inputs :)
 [_ADJUST] = LAYOUT_planck_grid(
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_DEL, // it also has del :)
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, KC_SCRT, KC_DEL, // it also has del :)
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, COLCOL , _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, RESET
 ),
@@ -78,7 +95,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 ),
 
 [_FN] = LAYOUT_planck_grid(
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, 
+    _______, QWERTY,  COLEMAK, _______, _______, _______, _______, _______, _______, _______, _______, _______, 
     _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10 , _______,
     _______, KC_F11,  KC_F12,  _______, _______, _______, _______, _______, _______, _______, _______, _______,
     _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______
@@ -89,8 +106,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
 // clang-format on
 
-layer_state_t layer_state_set_user(layer_state_t state) {
+void keyboard_post_init_user(void) {
+    set_single_persistent_default_layer(_QWERTY);
+    debug_enable = true;
+}
+dd-- yy -''-- --layer_state_t layer_state_set_user(layer_state_t state) {
     return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
+}
+
+uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_EMOD: // EMOD is basically a new layer key, so we want it to enable instantly.
+            uprintf("EMOD\n");
+            return 100;
+        default: // all other modtaps can wait the usual amount of time.
+            return TAPPING_TERM;
+    }
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
@@ -99,8 +130,22 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     if (record->event.pressed && layer_state_is(_EMOD)) {
         emod_used = true;
     }
-
     switch (keycode) {
+        case QWERTY:
+            if (record->event.pressed) {
+                uprintf("QWERTY\n");
+                set_single_persistent_default_layer(_QWERTY);
+            }
+            return true;
+        case COLEMAK:
+            if (record->event.pressed) {
+                uprintf("COLEMAK\n");
+                set_single_persistent_default_layer(_COLEMAK);
+            }
+            return true;
+        case COLCOL:
+            if (record->event.pressed) SEND_STRING("::");
+            break;
         case KC_NEWL:
             if (record->event.pressed) SEND_STRING("\\n");
             break;
@@ -113,7 +158,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 if (!emod_used) tap_code(KC_ESC);
             }
             break;
-
         default:
             break;
     }
