@@ -40,6 +40,16 @@ enum custom_keycodes {
 // Screenshot keycode on macos (and windows if you install greenshot and configure it right...)
 #define KC_SCRT LCTL(LSFT(KC_4))
 
+#define MT_R MT(MOD_LGUI, KC_R)
+#define MT_E MT(MOD_LALT, KC_E)
+#define MT_W MT(MOD_LCTL, KC_W)
+#define MT_Q MT(MOD_LSFT, KC_Q)
+
+#define MT_U MT(MOD_LGUI, KC_U)
+#define MT_I MT(MOD_LALT, KC_I)
+#define MT_O MT(MOD_LCTL, KC_O)
+#define MT_P MT(MOD_LSFT, KC_P)
+
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
@@ -90,8 +100,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 [_EMOD] = LAYOUT_planck_grid(
     _______, KC_WH_U, KC_MS_U, KC_WH_D, _______, _______, _______, _______, _______, _______, _______, _______, 
     _______, KC_MS_L, KC_MS_D, KC_MS_R, _______, _______, KC_LEFT, KC_DOWN, KC_UP,  KC_RIGHT, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, KC_BTN1, KC_BTN1, _______, _______, _______, _______, _______
+    _______, _______, _______, _______, _______, _______, A(KC_LEFT), A(KC_DOWN), A(KC_UP), A(KC_RIGHT), _______, _______,
+    _______, _______, _______, _______, _______, KC_BTN1, KC_BTN1, _______, _______, KC_PGDN, KC_PGUP, _______
 ),
 
 [_FN] = LAYOUT_planck_grid(
@@ -110,7 +120,7 @@ void keyboard_post_init_user(void) {
     set_single_persistent_default_layer(_QWERTY);
     debug_enable = true;
 }
-dd-- yy -''-- --layer_state_t layer_state_set_user(layer_state_t state) {
+layer_state_t layer_state_set_user(layer_state_t state) {
     return update_tri_layer_state(state, _LOWER, _RAISE, _ADJUST);
 }
 

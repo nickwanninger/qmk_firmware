@@ -23,7 +23,7 @@
 #define MOUSEKEY_BASE_SPEED 200
 #define MOUSEKEY_MOVE_DELTA 1
 
-#define RGBLIGHT_LAYERS
+// #define RGBLIGHT_LAYERS
 
 // #define DEBOUNCE 2
 #define TAPPING_TERM 200 // default tapping term. Overwritten per key in `get_tapping_term`
@@ -32,4 +32,4 @@
 #define IGNORE_MOD_TAP_INTERRUPT // this makes it possible to do rolling combos (zx) with keys that convert to other keys on hold (z becomes ctrl when you hold it, and when this option isn't enabled, z rapidly followed by x actually sends Ctrl-x. That's bad.)
 
 #define USB_MAX_POWER_CONSUMPTION 500
-#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 255
+#define RGB_MATRIX_MAXIMUM_BRIGHTNESS 0
