@@ -71,7 +71,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     KC_TAB,  KC_Q,    KC_W,    KC_E,    KC_R,    KC_T,                      KC_Y,    KC_U,    KC_I,    KC_O,    KC_P,    KC_BSPC,
     KC_EMOD, KC_A,    KC_S,    KC_D,    KC_F,    KC_G,                      KC_H,    KC_J,    KC_K,    KC_L,    KC_SCLN, KC_QUOT,
     KC_LSFT, KC_Z,    KC_X,    KC_C,    KC_V,    KC_B,                      KC_N,    KC_M,    KC_COMM, KC_DOT,  KC_SLSH, KC_ENT,
-    KC_LCTL, FUNCT,   KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_LBRC, KC_RBRC, KC_SPC,  RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT,
+    KC_LCTL, FUNCT,   KC_LALT, KC_LGUI, LOWER,   KC_SPC,  KC_LBRC, KC_RBRC, KC_LCTL, RAISE,   KC_LEFT, KC_DOWN, KC_UP,   KC_RGHT,
                                _______, _______, _______, _______, _______, _______, _______,_______
 ),
 [_LOWER] = LAYOUT(
@@ -106,7 +106,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     _______, _______, _______, _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
     _______, KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,                     KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10 , _______,
     _______, KC_F11,  KC_F12,  _______, _______, _______,                   _______, _______, _______, _______, _______, _______,
-    _______, _______, _______, _______, _______, _______, _______, _______, _______, _______, C(S(KC_TAB)), _______, _______, C(KC_TAB),
+    _______, _______, _______, _______, _______, _______, _______, _______, _______, C(A(S(KC_M))), C(S(KC_TAB)), _______, _______, C(KC_TAB),
                                _______, _______, _______, _______, _______, _______, _______, _______
 )
 };
@@ -127,7 +127,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 
-static unsigned total_presses = 0;
+unsigned ncw_key_presses = 0;
 
 void fmt_int(int n, char out[4]) {
     out[3] = '\0';
@@ -165,7 +165,7 @@ bool oled_task_user(void) {
         oled_write_P(PSTR("WPM:   "), false);
         oled_write(out, false);
 
-        fmt_int(total_presses, out);
+        fmt_int(ncw_key_presses, out);
         oled_write_P(PSTR("\nCOUNT: "), false);
         oled_write(out, false);
 
@@ -180,7 +180,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 
     static bool emod_used = false;
 
-    if (record->event.pressed) total_presses++;
+    if (record->event.pressed) ncw_key_presses++;
 
     if (record->event.pressed && layer_state_is(_EMOD)) {
         emod_used = true;
